@@ -2,7 +2,7 @@
 
 ROOT="$PWD/src"
 OUTPUT="$PWD/output"
-TEXTBUNDLE="$ROOT/content.textbundle"
+TEXTBUNDLE="$ROOT"
 ASSETS="$TEXTBUNDLE/assets"
 TEMPLATE="$ROOT/template"
 
