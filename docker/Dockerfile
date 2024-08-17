@@ -1,9 +1,9 @@
-FROM debian:stretch
+FROM debian:buster
 LABEL maintainer="Philipp Kohn <annoy-duopoly0q@icloud.com>"
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV DEBCONF_NONINTERACTIVE_SEEN true
-ENV HOME /
+ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
+ENV HOME=/
 
 RUN apt-get update && apt-get install -y imagemagick
 
@@ -25,7 +25,7 @@ RUN wget http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz; \
   rm -r /install-tl-unx; \
   rm install-tl-unx.tar.gz
 
-ENV TEXLIVE_DIR="/usr/local/texlive/2019"
+ENV TEXLIVE_DIR="/usr/local/texlive/2024"
 ENV TEXLIVE_BIN="${TEXLIVE_DIR}/bin/x86_64-linux"
 ENV PATH="${TEXLIVE_BIN}:${PATH}"
 
@@ -34,25 +34,41 @@ RUN apt-get update && apt-get install -y curl
 RUN curl https://get-ghcup.haskell.org -sSf | sh
 RUN curl -sSL https://get.haskellstack.org/ | sh
 ENV PATH="/.cabal/bin:/.local/bin:/.ghcup/bin:${PATH}"
-RUN cabal new-install pandoc pandoc-crossref pandoc-citeproc
+RUN cabal new-install pandoc pandoc-crossref 
+# pandoc-citeproc # no longer needed to install, since it is now part of regular old pandoc
 
-# ghostscript links to export (https://packages.debian.org/jessie/amd64/ghostscript/filelist)
-RUN ln -s /usr/bin/dvipdf /usr/bin/eps2eps /usr/bin/font2c /usr/bin/ghostscript \
-  /usr/bin/gs /usr/bin/gsbj /usr/bin/gsdj /usr/bin/gsdj500 /usr/bin/gslj /usr/bin/gslp \
-  /usr/bin/gsnd /usr/bin/pdf2dsc/usr/bin/pdf2ps /usr/bin/pdfopt /usr/bin/pf2afm \
-  /usr/bin/pfbtopfa /usr/bin/pphs /usr/bin/printafm /usr/bin/ps2ascii /usr/bin/ps2epsi \
-  /usr/bin/ps2pdf /usr/bin/ps2pdf12 /usr/bin/ps2pdf13 /usr/bin/ps2pdf14 /usr/bin/ps2pdfwr \
-  /usr/bin/ps2ps /usr/bin/ps2ps2 /usr/bin/ps2txt /usr/bin/wftopfa "${TEXLIVE_BIN}"
-
-# Install required LaTeX packages
-RUN tlmgr install biber latexmk varwidth logreq tabu geometry biblatex csquotes \
-  blindtext chngcntr tikz-cd blindtext wrapfig tabu paralist cleveref
-
-COPY build.sh /build.sh
-RUN chmod +x build.sh
-
-ENTRYPOINT [ "/build.sh" ]
-
-WORKDIR /github/workspace
-
-VOLUME ["/github/workspace"]
+## ghostscript links to export (https://packages.debian.org/jessie/amd64/ghostscript/filelist)
+#RUN ln -s /usr/bin/dvipdf /usr/bin/eps2eps /usr/bin/font2c /usr/bin/ghostscript \
+#  /usr/bin/gs /usr/bin/gsbj /usr/bin/gsdj /usr/bin/gsdj500 /usr/bin/gslj /usr/bin/gslp \
+#  /usr/bin/gsnd /usr/bin/pdf2dsc /usr/bin/pdf2ps /usr/bin/pdfopt /usr/bin/pf2afm \
+#  /usr/bin/pfbtopfa /usr/bin/pphs /usr/bin/printafm /usr/bin/ps2ascii /usr/bin/ps2epsi \
+#  /usr/bin/ps2pdf /usr/bin/ps2pdf12 /usr/bin/ps2pdf13 /usr/bin/ps2pdf14 /usr/bin/ps2pdfwr \
+#  /usr/bin/ps2ps /usr/bin/ps2ps2 /usr/bin/ps2txt /usr/bin/wftopfa "${TEXLIVE_BIN}"
+#
+##RUN ln -s /usr/bin/dvipdf /usr/bin/eps2eps /usr/bin/ghostscript /usr/bin/gs \
+##/usr/bin/gsbj /usr/bin/gsdj /usr/bin/gsdj500 /usr/bin/gslj \
+##/usr/bin/gslp /usr/bin/gsnd /usr/bin/pdf2dsc /usr/bin/pdf2ps \ 
+##/usr/bin/pf2afm /usr/bin/pfbtopfa /usr/bin/pphs /usr/bin/printafm \
+##/usr/bin/ps2ascii /usr/bin/ps2epsi /usr/bin/ps2pdf /usr/bin/ps2pdf12 \
+##/usr/bin/ps2pdf13 /usr/bin/ps2pdf14 /usr/bin/ps2pdfwr /usr/bin/ps2ps\
+##/usr/bin/ps2ps2 /usr/bin/ps2txt /usr/sbin/update-gsfontmap  usr/share/doc/ghostscript/NEWS.Debian.gz \
+##/usr/share/doc/ghostscript/README.Debian /usr/share/doc/ghostscript/TODO.Debian /usr/share/doc/ghostscript/changelog.Debian.gz /usr/share/doc/ghostscript/copyright \
+##/usr/share/man/man1/dvipdf.1.gz /usr/share/man/man1/eps2eps.1.gz /usr/share/man/man1/ghostscript.1.gz /usr/share/man/man1/gs.1.gz \
+##/usr/share/man/man1/gsbj.1.gz /usr/share/man/man1/gsdj.1.gz /usr/share/man/man1/gsdj500.1.gz /usr/share/man/man1/gslj.1.gz \
+##/usr/share/man/man1/gslp.1.gz /usr/share/man/man1/gsnd.1.gz /usr/share/man/man1/pdf2dsc.1.gz /usr/share/man/man1/pdf2ps.1.gz \
+##/usr/share/man/man1/pf2afm.1.gz /usr/share/man/man1/pfbtopfa.1.gz /usr/share/man/man1/printafm.1.gz /usr/share/man/man1/ps2ascii.1.gz \
+##/usr/share/man/man1/ps2epsi.1.gz /usr/share/man/man1/ps2pdf.1.gz /usr/share/man/man1/ps2pdf12.1.gz /usr/share/man/man1/ps2pdf13.1.gz\
+##/usr/share/man/man1/ps2pdf14.1.gz /usr/share/man/man1/ps2pdfwr.1.gz /usr/share/man/man1/ps2ps.1.gz  "${TEXLIVE_BIN}"
+#
+## Install required LaTeX packages
+#RUN tlmgr install biber latexmk varwidth logreq tabu geometry biblatex csquotes \
+#  blindtext chngcntr tikz-cd blindtext wrapfig tabu paralist cleveref
+#
+#COPY build.sh /build.sh
+#RUN chmod +x build.sh
+#
+#ENTRYPOINT [ "/build.sh" ]
+#
+#WORKDIR /github/workspace
+#
+#VOLUME ["/github/workspace"]

@@ -41,14 +41,14 @@ cleanup() {
 blue_echo "Cleaning directories..."
 cleanup
 
-# Build TeX from Markdown
+# Build TeX from Markdown (maybe I need to include the params.yml file here)
 blue_echo "Building TeX from Markdown..."
 safe_cd "$TEXTBUNDLE"
 pandoc --filter pandoc-crossref --filter pandoc-citeproc \
   -M cref=true \
-  --bibliography ../bibliography/bibliography.bib --biblatex \
+  --bibliography ../bibtex.bib --biblatex \
   --top-level-division=chapter \
-  -o text.tex text.md
+  -o output.tex input.md
 
 # Convert TIFF Images to JPG
 blue_echo "Converting images that are not compatible with pdfLaTeX..."
