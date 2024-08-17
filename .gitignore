@@ -1,7 +1,7 @@
 ## Custom
-src/content.textbundle/*.tex
-src/content.textbundle/*.tex-e
-src/content.textbundle/*.html
+src/*.tex
+src/*.tex-e
+src/*.html
 output/
 *-converted.jpg
 ~$*.doc?
