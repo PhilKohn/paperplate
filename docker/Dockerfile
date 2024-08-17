@@ -1,5 +1,5 @@
 FROM debian:stretch
-LABEL maintainer="Leo Bernard <admin@leolabs.org>"
+LABEL maintainer="Philipp Kohn <philipp_kohn@outlook.com>"
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN true
