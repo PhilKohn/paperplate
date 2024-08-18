@@ -26,13 +26,17 @@ jobs:
           pandoc_cmd="pandoc --verbose --filter pandoc-xnos --citeproc ./src/input.md --bibliography ./src/assets/bibtex.bib --csl ./src/template/apa.csl -o output.pdf --template ./src/template/imperial.tex"
 
           i=1
-          log_file="/tmp/tex2pdf.-c050fda7d55a2b0b/input.log"
           while [ $i -le $RETRIES ]; do
             echo "Attempt $i..."
             sh -c "$pandoc_cmd" && break
 
-            # If the command fails, check for the existence of the log file directly
-            if [ -f "$log_file" ]; then
+            # Introduce a short delay to ensure the log file is written
+            sleep 2
+
+            # Search for any log file in /tmp
+            log_file=$(find /tmp -name "*.log" | head -n 1)
+
+            if [ -n "$log_file" ]; then
               echo "Log file found: $log_file"
               missing_pkg=$(grep -oP "(?<=\`).+\.sty(?=\`)" "$log_file" | sed 's/\.sty//')
 
