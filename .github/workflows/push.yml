@@ -25,7 +25,8 @@ jobs:
           RETRIES=5
           pandoc_cmd="pandoc --verbose --filter pandoc-xnos --citeproc ./src/input.md --bibliography ./src/assets/bibtex.bib --csl ./src/template/apa.csl -o output.pdf --template ./src/template/imperial.tex"
 
-          for ((i=1;i<=RETRIES;i++)); do
+          i=1
+          while [ $i -le $RETRIES ]; do
             echo "Attempt $i..."
             $pandoc_cmd && break
 
@@ -39,6 +40,8 @@ jobs:
               echo "No more missing packages detected, or another error occurred."
               exit 1
             fi
+
+            i=$((i + 1))
           done
 
       # output generated file to build artifacts
