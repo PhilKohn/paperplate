@@ -17,8 +17,8 @@ jobs:
           apt-get update && apt-get install python3 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
 
       - name: get xnos
-        run: pip install --root-user-action=ignore --break-system-packages pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos
-
+        run: python -m pip install --force-reinstall --root-user-action=ignore --break-system-packages git+https://github.com/tomduck/pandoc-xnos@284474574f51888be75603e7d1df667a0890504d#egg=pandoc-xnos 
+        
       # run pandoc to generate pdf from markdown
       - name: run pandoc
         run: |
