@@ -31,13 +31,21 @@ jobs:
             sh -c "$pandoc_cmd" && break
 
             # If the command fails, look for missing LaTeX packages in the log
-            missing_pkg=$(grep -oP "(?<=\`).+\.sty(?=\`)" /tmp/tex2pdf.*/*.log | sed 's/\.sty//')
+            log_file=$(find /tmp -name "*.log" -print -quit)
 
-            if [ -n "$missing_pkg" ]; then
-              echo "Missing package detected: $missing_pkg"
-              tlmgr install "$missing_pkg"
+            if [ -n "$log_file" ]; then
+              echo "Log file found: $log_file"
+              missing_pkg=$(grep -oP "(?<=\`).+\.sty(?=\`)" "$log_file" | sed 's/\.sty//')
+
+              if [ -n "$missing_pkg" ]; then
+                echo "Missing package detected: $missing_pkg"
+                tlmgr install "$missing_pkg"
+              else
+                echo "No missing LaTeX packages found in the log."
+                exit 1
+              fi
             else
-              echo "No more missing packages detected, or another error occurred."
+              echo "No log file found. Exiting."
               exit 1
             fi
 
