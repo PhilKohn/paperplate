@@ -1,14 +1,3 @@
-## Custom
-src/*.tex
-src/*.tex-e
-src/*.html
-output/
-*-converted.jpg
-~$*.doc?
-
-src/template/index.*
-!src/template/index.tex
-
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
