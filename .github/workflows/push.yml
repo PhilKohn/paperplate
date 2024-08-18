@@ -1,4 +1,4 @@
-name: Generate Word Doc
+name: compile pdf
 
 on: push
 
@@ -6,19 +6,19 @@ jobs:
   convert_via_pandoc:
     runs-on: ubuntu-20.04
     container: 
-      image: pandoc/latex:latest
+      image: pandoc/core:latest
 
     steps:
       # checkout repo contents
       - uses: actions/checkout@v4
 
-      # run pandoc to generate word doc from markdown
+      # run pandoc to generate pdf from markdown
       - name: run pandoc
         run: |
-          pandoc -f markdown -t docx -o "gh-actions-pandoc-readme.docx" --toc "./README.md" 
+          pandoc -f markdown -t pdf -o "output.pdf" --toc "./src/input.md" 
 
       # output generated file to build artifacts
       - uses: actions/upload-artifact@v3
         with:
-          name: Word Doc
-          path: "gh-actions-pandoc-readme.docx"
+          name: output
+          path: "output.pdf"
