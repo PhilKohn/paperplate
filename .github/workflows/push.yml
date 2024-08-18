@@ -21,7 +21,7 @@ jobs:
 
       - name: install missing TexLive packages
         run:  |
-          tlmgr install textpos subfigure fncylab doublestroke
+          tlmgr install textpos subfigure fncylab doublestroke siunitx
 
       # run pandoc to generate pdf from markdown
       - name: run pandoc
