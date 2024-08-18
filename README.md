@@ -66,6 +66,12 @@ This structure ensures your Markdown file is compatible with Pandoc’s processi
 - I recommend using Zotero and its Better BibTex add on to generete the `.bib` file in `src/assets`
 - Also, you should have git installed on your machine and an GitHub account. You can also use the GitHub Desktop app if you don't want to use the terminal. This way you can clone this template to your repository and make push commits to trigger the workflow which will generate the pdf file. 
 
+## Planed Development
+
+- Write a `build.sh` file that will enable users to run everything locally.
+- Build a `Dockerfile` on `pandoc/latex:ubuntu-latest` to avoid installing python and all TexLive dependencys within the GitHub Actions process.
+- Build more templates.
+
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
