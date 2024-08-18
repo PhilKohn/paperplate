@@ -14,7 +14,7 @@ jobs:
 
       - name: install python
         run: |
-          apt update && apt install python3.8 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
+          apk update && apk add python3.8 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
 
       - name: get xnos
         run: pip install pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos --user
