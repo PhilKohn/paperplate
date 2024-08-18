@@ -12,6 +12,10 @@ jobs:
       # checkout repo contents
       - uses: actions/checkout@v4
 
+      - name: get xnos
+        run: pip install pandoc-fignos pandoc-eqnos pandoc-tablenos \
+            pandoc-secnos --user
+
       # run pandoc to generate pdf from markdown
       - name: run pandoc
         run: |
