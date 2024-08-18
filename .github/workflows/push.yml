@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: version ubuntu
-        run: lsb_release -a
+        run: cat etc/os-release
 
       - name: install python
         run: |
