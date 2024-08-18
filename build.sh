@@ -1,6 +1,10 @@
 #!/bin/sh
 
-mkdir -p output
-
-docker run --rm -i --user="$(id -u):$(id -g)" --net=none \
-  -v "$PWD":/github/workspace "philkohn/academic-writing"
+docker run --rm \
+       --volume "$(pwd):/data" \
+       --user $(id -u):$(id -g) \
+       pandoc/core --filter pandoc-crossref --filter pandoc-citeproc \
+       -M cref=true \
+       --bibliography src/bibtex.bib --biblatex \
+       --top-level-division=chapter \
+       README.md -o output/output.pdf
