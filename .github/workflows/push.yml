@@ -12,12 +12,12 @@ jobs:
       # checkout repo contents
       - uses: actions/checkout@v4
 
-      - name: get xnos
-        run: pip install pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos
-
       - name: install python
         run: |
           apt-get update && apt-get install python3 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
+
+      - name: get xnos
+        run: sudo -H pip install pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos
 
       # run pandoc to generate pdf from markdown
       - name: run pandoc
