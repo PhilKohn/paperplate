@@ -6,7 +6,7 @@ jobs:
   convert_via_pandoc:
     runs-on: ubuntu-20.04
     container: 
-      image: pandoc/latex:latest
+      image: pandoc/latex:latest-ubuntu
 
     steps:
       # checkout repo contents
@@ -14,7 +14,7 @@ jobs:
 
       - name: install python
         run: |
-          apk update && apk add python3.8 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
+          apt update && apt install python3.8 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
 
       - name: get xnos
         run: pip install pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos --user
