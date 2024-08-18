@@ -15,7 +15,7 @@ jobs:
       # run pandoc to generate pdf from markdown
       - name: run pandoc
         run: |
-          pandoc -f markdown -t pdf -o "output.pdf" --toc "./src/input.md" 
+          pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/bibtex.bib" --csl "./src/apa.csl" -o "output.pdf" --template "./src/imperial.tex"
 
       # output generated file to build artifacts
       - uses: actions/upload-artifact@v3
