@@ -28,16 +28,23 @@ jobs:
           i=1
           while [ $i -le $RETRIES ]; do
             echo "Attempt $i..."
-            sh -c "$pandoc_cmd" && break
+            sh -c "$pandoc_cmd" || true
 
             # Introduce a short delay to ensure the log file is written
             sleep 2
+
+            # Print contents of /tmp to debug file existence issues
+            echo "Listing /tmp directory contents for debugging:"
+            ls -l /tmp
 
             # Search for any log file in /tmp
             log_file=$(find /tmp -name "*.log" | head -n 1)
 
             if [ -n "$log_file" ]; then
               echo "Log file found: $log_file"
+              echo "Log file contents:"
+              cat "$log_file"
+
               missing_pkg=$(grep -oP "(?<=\`).+\.sty(?=\`)" "$log_file" | sed 's/\.sty//')
 
               if [ -n "$missing_pkg" ]; then
