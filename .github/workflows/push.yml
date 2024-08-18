@@ -12,12 +12,9 @@ jobs:
       # checkout repo contents
       - uses: actions/checkout@v4
 
-      - name: version ubuntu
-        run: hostnamectl
-
       - name: install python
         run: |
-          apt update && apt install python3.8 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
+          sudo apt update && sudo apt install python3.8 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
 
       - name: get xnos
         run: pip install pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos --user
