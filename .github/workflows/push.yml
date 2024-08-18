@@ -6,7 +6,7 @@ jobs:
   convert_via_pandoc:
     runs-on: ubuntu-20.04
     container: 
-      image: pandoc/core:latest
+      image: pandoc/latex:latest
 
     steps:
       # checkout repo contents
