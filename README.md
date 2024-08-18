@@ -71,6 +71,7 @@ This structure ensures your Markdown file is compatible with Pandoc’s processi
 - Write a `build.sh` file that will enable users to run everything locally.
 - Build a `Dockerfile` on `pandoc/latex:ubuntu-latest` to avoid installing python and all TexLive dependencys within the GitHub Actions process.
 - Build more templates.
+- Build a way to trigger same action on release for more structured release of Thesis versions.
 
 ## License
 
