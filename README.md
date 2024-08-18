@@ -6,9 +6,6 @@ This repository will serve as a basis for automatically compiling academic writi
 
 ```
 .
-├── docker
-    ├── Dockerfile
-    ├── build.sh
 ├── output
     ├── output.pdf
     ├── output.tex

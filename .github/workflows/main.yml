@@ -1,16 +1,29 @@
 name: CI
 
-on: [release]
+on: release
 
 jobs:
-  build:
+  build-pdf-release:
+    name: Build and upload pdf from markdown.
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v1
-      - uses: docker://pandoc/core
+      - name: pull source
+        uses: actions/checkout@v2
+
+      - name: Run Docker container to compile pdf
+        uses: addnab/docker-run-action@v3
+        with:
+          image: pandoc/core:latest
+          options: -v ${{ github.workspace }}:/data \
+                  --user $(id -u):$(id -g)
+          run: --filter pandoc-crossref --filter pandoc-citeproc \
+              -M cref=true \
+              --bibliography src/bibtex.bib --biblatex \
+              --top-level-division=chapter \
+              README.md -o output/output.pdf
+
       - uses: JasonEtco/upload-to-release@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          args: output/output.pdf application/pdf
+          args: output.pdf application/pdf
