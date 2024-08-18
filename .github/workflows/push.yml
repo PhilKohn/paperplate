@@ -26,14 +26,13 @@ jobs:
           pandoc_cmd="pandoc --verbose --filter pandoc-xnos --citeproc ./src/input.md --bibliography ./src/assets/bibtex.bib --csl ./src/template/apa.csl -o output.pdf --template ./src/template/imperial.tex"
 
           i=1
+          log_file="/tmp/tex2pdf.-c050fda7d55a2b0b/input.log"
           while [ $i -le $RETRIES ]; do
             echo "Attempt $i..."
             sh -c "$pandoc_cmd" && break
 
-            # If the command fails, look for missing LaTeX packages in the log
-            log_file=$(find /tmp -name "*.log" -print -quit)
-
-            if [ -n "$log_file" ]; then
+            # If the command fails, check for the existence of the log file directly
+            if [ -f "$log_file" ]; then
               echo "Log file found: $log_file"
               missing_pkg=$(grep -oP "(?<=\`).+\.sty(?=\`)" "$log_file" | sed 's/\.sty//')
 
@@ -45,7 +44,7 @@ jobs:
                 exit 1
               fi
             else
-              echo "No log file found. Exiting."
+              echo "Log file not found after attempting to compile."
               exit 1
             fi
 
