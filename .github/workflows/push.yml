@@ -19,48 +19,14 @@ jobs:
       - name: get xnos
         run: python -m pip install --force-reinstall --root-user-action=ignore --break-system-packages git+https://github.com/tomduck/pandoc-xnos@284474574f51888be75603e7d1df667a0890504d#egg=pandoc-xnos 
 
+      - name: install missing TexLive packages
+        run:  |
+          tlmgr install textpos
+          
       # run pandoc to generate pdf from markdown
-      - name: compile with pandoc
+      - name: run pandoc
         run: |
-          RETRIES=5
-          pandoc_cmd="pandoc --verbose --filter pandoc-xnos --citeproc ./src/input.md --bibliography ./src/assets/bibtex.bib --csl ./src/template/apa.csl -o output.pdf --template ./src/template/imperial.tex"
-
-          i=1
-          while [ $i -le $RETRIES ]; do
-            echo "Attempt $i..."
-            sh -c "$pandoc_cmd" || true
-
-            # Introduce a short delay to ensure the log file is written
-            sleep 2
-
-            # Print contents of /tmp to debug file existence issues
-            echo "Listing /tmp directory contents for debugging:"
-            ls -l /tmp
-
-            # Search for any log file in /tmp
-            log_file=$(find /tmp -name "*.log" | head -n 1)
-
-            if [ -n "$log_file" ]; then
-              echo "Log file found: $log_file"
-              echo "Log file contents:"
-              cat "$log_file"
-
-              missing_pkg=$(grep -oP "(?<=\`).+\.sty(?=\`)" "$log_file" | sed 's/\.sty//')
-
-              if [ -n "$missing_pkg" ]; then
-                echo "Missing package detected: $missing_pkg"
-                tlmgr install "$missing_pkg"
-              else
-                echo "No missing LaTeX packages found in the log."
-                exit 1
-              fi
-            else
-              echo "Log file not found after attempting to compile."
-              exit 1
-            fi
-
-            i=$((i + 1))
-          done
+          pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/assets/bibtex.bib" --csl "./src/template/apa.csl" -o "output.pdf" --template "./src/template/imperial.tex"
 
       # output generated file to build artifacts
       - uses: actions/upload-artifact@v3
