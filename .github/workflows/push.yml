@@ -17,7 +17,7 @@ jobs:
           apt-get update && apt-get install python3 python3-pip -y && ln -s /usr/bin/python3 /usr/bin/python
 
       - name: get xnos
-        run: apt-get install python3-pandoc-fignos python3-pandoc-eqnos python3-pandoc-tablenos python3-pandoc-secnos
+        run: pip install pandoc-fignos pandoc-eqnos pandoc-tablenos pandoc-secnos
 
       # run pandoc to generate pdf from markdown
       - name: run pandoc
