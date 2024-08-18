@@ -15,15 +15,23 @@ This repository provides a template for compiling academic theses or papers usin
 
 ## Usage
 
-1. **Edit Markdown Content:**
+1. **Initialize a new repo from this repo template**
+   - Clone this template to your GitHub account
+   - Download GitHub CLI
+        - On Mac: `brew install gh`
+   - login to GitHub using `gh auth login`
+        - If Auth login fails due to permission issues on `./config` check: https://github.com/cli/cli/issues/5013#issuecomment-1167161959
+   - Create a new repo on GitHub using `gh repo create` and follow each step, select `create from template`, give the repo a name, select `paperplate` as the template
+
+3. **Edit Markdown Content:**
    - Modify the `src/input.md` file with your thesis content.
    - Update `src/assets/bibtex.bib` for your references.
 
-2. **Automatic PDF Generation:**
+4. **Automatic PDF Generation:**
    - Push your changes to the repository.
    - The GitHub Actions workflow will automatically compile the Markdown into a PDF using Pandoc.
 
-3. **Download the PDF:**
+5. **Download the PDF:**
    - After the workflow completes, download the generated `output.pdf` from the GitHub Actions artifacts.
   
 ### Markdown Structure Guidelines
