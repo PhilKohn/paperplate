@@ -21,8 +21,8 @@ jobs:
 
       - name: install missing TexLive packages
         run:  |
-          tlmgr install textpos
-          
+          tlmgr install textpos subfigure
+
       # run pandoc to generate pdf from markdown
       - name: run pandoc
         run: |
