@@ -21,7 +21,7 @@ abstract: This thesis aims to explain ...
 acknowledgements: I would like to thank myself.
 ---
 
-<!-- pandoc --verbose --filter pandoc-xnos --citeproc "complete.md" --bibliography latex.bib -o final.pdf --template imperial.tex -->
+<!-- pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/assets/bibtex.bib" --csl "./src/template/apa.csl" -o "output.pdf" --template "./src/template/imperial.tex" -->
 
 <!---Named references can be added to figures, tables, equations, and sections. For figures, place `{#fig:referenceName}` directly after an image in Ulysses [no whitespace allowed]. You can now reference the figure with `@fig:referenceName`.-->
 
