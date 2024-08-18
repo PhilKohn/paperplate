@@ -21,6 +21,7 @@ jobs:
 
       - name: install missing TexLive packages
         run:  |
+          apt-get install texlive-collection-fontsrecommended texlive-times -y
           tlmgr install textpos subfigure fncylab doublestroke siunitx threeparttable courier
 
       # run pandoc to generate pdf from markdown
