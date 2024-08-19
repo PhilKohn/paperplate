@@ -53,11 +53,11 @@ acknowledgements: I would like to thank myself.
 <!--@smith04 [p. 33] says blah. -->
 
 <!--- https://github.com/tomduck/pandoc-xnos -->
-# Chapter 1
+# Introduction
 
 Lorem ipsum
 
-## Sub Chapter 1.1
+## Some addtional info
 
 test test
 
