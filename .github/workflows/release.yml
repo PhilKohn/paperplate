@@ -29,7 +29,7 @@ jobs:
           pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/assets/bibtex.bib" --csl "./src/template/apa.csl" -o "output.pdf" --template "./src/template/imperial.tex"
 
       # output generated file to build artifacts
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: output
           path: "output.pdf"
