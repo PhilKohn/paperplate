@@ -28,6 +28,20 @@ jobs:
         run: |
           pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/assets/bibtex.bib" --csl "./src/template/apa.csl" -o "output.pdf" --template "./src/template/imperial.tex"
 
+      # output generated file to build artifacts
+      - uses: actions/upload-artifact@v3
+        with:
+          name: output
+          path: "output.pdf"
+
+  upload_to_release:
+    needs: convert_via_pandoc
+    runs-on: ubuntu-20.04
+    steps:
+      - name: download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: output
       - name: Upload to release
         uses: JasonEtco/upload-to-release@master
         with:
