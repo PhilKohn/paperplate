@@ -41,6 +41,9 @@ cleanup() {
 blue_echo "Cleaning directories..."
 cleanup
 
+pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/assets/bibtex.bib" \
+  --csl "./src/template/apa.csl" -o "output.pdf" --template "./src/template/imperial.tex"
+
 ## Build TeX from Markdown
 #blue_echo "Building TeX from Markdown..."
 #safe_cd "$MARKDOWN"
@@ -72,7 +75,7 @@ cleanup
 # Copy files
 blue_echo "Copying the result to output..."
 mkdir -p "$OUTPUT"
-cp index.pdf "$OUTPUT/output.pdf"
+cp output.pdf "$OUTPUT/output.pdf"
 
 # Cleanup (again)
 blue_echo "Cleaning up..."
