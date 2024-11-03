@@ -15,7 +15,7 @@ RUN python -m pip install --force-reinstall --root-user-action=ignore --break-sy
 RUN tlmgr install textpos subfigure fncylab doublestroke siunitx threeparttable charter
 
 COPY docker/build.sh /build.sh
-RUN chmod +x build.sh
+RUN chmod +x /build.sh
 
 ENTRYPOINT [ "/build.sh" ]
 
