@@ -2,13 +2,13 @@ name: Build Docker Image
 on:
   push:
     branches:
-      - main
+      - dockerfile
 jobs:
     build:
       name: push docker image to docker hub
       runs-on: ubuntu-latest
       steps:
-        - uses: actions/checkout@v2
+        - uses: actions/checkout@v4
         - name: login to docker hub
           id: docker-hub
           env:
@@ -20,7 +20,7 @@ jobs:
           id: build-docker-image
           run: |
             ls -la 
-            docker build . -f Dockerfile -t dhruvin30/demo-image-test:latest
+            docker build . -f docker/Dockerfile -t ${{secrets.DOCKERHUB_USERNAME}}/academic-writing:latest
         - name: push the docker image
           id: push-docker-image
-          run: docker push ${{secrets.DOCKERHUB_USERNAME}}/demo-image-test:latest
+          run: docker push ${{secrets.DOCKERHUB_USERNAME}}/academic-writing:latest
