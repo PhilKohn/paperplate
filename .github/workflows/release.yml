@@ -1,6 +1,6 @@
 name: compile on release
 
-on: push
+on: release
 
 jobs:
   convert_via_pandoc:
