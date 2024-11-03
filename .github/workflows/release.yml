@@ -14,4 +14,4 @@ jobs:
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
-          files: /github/workspace/output/output.pdf
+          files: output/output.pdf
