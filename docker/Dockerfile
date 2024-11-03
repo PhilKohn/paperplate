@@ -11,7 +11,7 @@ RUN python -m pip install --force-reinstall --root-user-action=ignore --break-sy
 # install missing TexLive packages
 RUN tlmgr install textpos subfigure fncylab doublestroke siunitx threeparttable charter
 
-COPY build.sh docker/build.sh
+COPY docker/build.sh /build.sh
 RUN chmod +x build.sh
 
 ENTRYPOINT [ "/build.sh" ]
