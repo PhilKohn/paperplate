@@ -2,7 +2,7 @@
 
 ROOT="$PWD/src"
 OUTPUT="$PWD/output"
-MARKDOWN="$ROOT/content.textbundle"
+MARKDOWN="$ROOT/input.md"
 ASSETS="$ROOT/assets"
 TEMPLATE="$ROOT/template"
 
