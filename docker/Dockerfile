@@ -19,6 +19,6 @@ RUN chmod +x /build.sh
 
 ENTRYPOINT [ "/build.sh" ]
 
-WORKDIR /github/workspace
+WORKDIR /
 
-VOLUME ["/github/workspace"]
+VOLUME ["/"]
