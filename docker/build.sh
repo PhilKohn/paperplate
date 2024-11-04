@@ -37,9 +37,9 @@ cleanup() {
   rm -f -- *.pdf *.aux *.fdb_latexmk *.fls *.lof *.lot *.log *.out *.synctex.gz *.toc *.bcf *.blg *.dvi *.run.xml *.out.ps
 }
 
-# First, clean up
-blue_echo "Cleaning directories..."
-cleanup
+## First, clean up
+#blue_echo "Cleaning directories..."
+#cleanup
 
 pandoc --verbose --filter pandoc-xnos --citeproc "./src/input.md" --bibliography "./src/assets/bibtex.bib" \
   --csl "./src/template/apa.csl" -o "output.pdf" --template "./src/template/imperial.tex"
@@ -77,6 +77,6 @@ blue_echo "Copying the result to output..."
 mkdir -p "$OUTPUT"
 cp output.pdf "$OUTPUT/output.pdf"
 
-# Cleanup (again)
-blue_echo "Cleaning up..."
-cleanup
+## Cleanup (again)
+#blue_echo "Cleaning up..."
+#cleanup
