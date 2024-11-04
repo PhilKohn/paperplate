@@ -5,7 +5,7 @@ This repository provides a template for compiling academic theses or papers usin
 ## Features
 
 - **Markdown to PDF Conversion:** Easily convert your thesis written in Markdown to a PDF.
-- **GitHub Actions Automation:** Automatically compile your thesis into a PDF upon pushing changes to the repository.
+- **GitHub Actions Automation:** Automatically compile your thesis into a PDF upon release. Then attaches the PDF to the release assets.
 - **Customizable Templates:** Modify the LaTeX template to suit your formatting needs.
 
 ## Repository Structure
@@ -32,7 +32,7 @@ This repository provides a template for compiling academic theses or papers usin
    - The GitHub Actions workflow will automatically compile the Markdown into a PDF using Pandoc.
 
 5. **Download the PDF:**
-   - After the workflow completes, download the generated `output.pdf` from the GitHub Actions artifacts.
+   - After the workflow completes, download the generated `output.pdf` from the release assets.
   
 ### Markdown Structure Guidelines
 
