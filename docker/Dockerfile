@@ -19,6 +19,6 @@ RUN chmod +x /build.sh
 
 ENTRYPOINT [ "/build.sh" ]
 
-WORKDIR /
+WORKDIR /src
 
-VOLUME ["/"]
+VOLUME ["/src"]
