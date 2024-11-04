@@ -17,7 +17,7 @@ RUN tlmgr install textpos subfigure fncylab doublestroke siunitx threeparttable 
 COPY docker/build.sh /build.sh
 RUN chmod +x /build.sh
 
-#ENTRYPOINT [ "/build.sh" ]
+ENTRYPOINT [ "/build.sh" ]
 
 WORKDIR /
 
