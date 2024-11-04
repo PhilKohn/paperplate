@@ -8,8 +8,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Run Docker container without AppArmor
-        run: docker run --security-opt apparmor=unconfined philkohn/academic-writing:latest
+      - uses: docker://philkohn/academic-writing:latest
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
