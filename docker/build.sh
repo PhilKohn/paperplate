@@ -1,7 +1,7 @@
 #!/bin/sh
 
 ROOT="$PWD/src"
-OUTPUT="$PWD/output"
+OUTPUT="$ROOT/output"
 MARKDOWN="$ROOT/input.md"
 ASSETS="$ROOT/assets"
 TEMPLATE="$ROOT/template"
