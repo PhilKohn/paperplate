@@ -157,7 +157,7 @@
     (..n) => if n.pos().len() <= heading-numbering-depth { numbering(heading-numbering, ..n) }
   }
   set heading(numbering: numbering-fn)
-  show heading: set text(font: heading-text-font, weight: "bold")
+  show heading: set text(font: heading-text-font, weight: "bold", hyphenate: false)
   show heading.where(level: 1): it => {
     if chapter-pagebreak { pagebreak(weak: true, to: if two-sided { "odd" } else { none }) }
     v(2.5cm * (if chapter-pagebreak { 1 } else { 0 }) / 3 + 0.5em)
@@ -198,10 +198,32 @@
     place(center + horizon, rotate(-35deg, text(size: 6em, weight: "bold", fill: luma(88%), draft-label)))
   } else { none }
 
+  let inline-front = title-block and not titlepage
+
+  // Running header (chapter title) used in the main matter.
+  let main-header = if running-header {
+    context {
+      let page-no = here().page()
+      let chapters = query(heading.where(level: 1, outlined: true))
+      let opens-chapter = chapters.any(h => h.location().page() == page-no)
+      let before = chapters.filter(h => h.location().page() <= page-no)
+      if opens-chapter or before.len() == 0 { none } else {
+        let ch = before.last()
+        let number = if ch.numbering != none {
+          [#numbering(ch.numbering, ..counter(heading).at(ch.location()))#h(1em)]
+        } else { none }
+        text(size: 0.85em, style: "italic", [#number#ch.body])
+        v(-0.5em)
+        line(length: 100%, stroke: 0.4pt)
+      }
+    }
+  } else { none }
+
   set page(
     paper: paper,
     margin: page-margin,
-    numbering: if title-block and not titlepage { "1" } else { none },
+    numbering: if inline-front { "1" } else { none },
+    header: if inline-front { main-header } else { none },
     background: background,
   )
 
@@ -261,7 +283,6 @@
   }
 
   // --- Title block (article style, no separate title page) ---
-  let inline-front = title-block and not titlepage
   if inline-front {
     align(center)[
       #text(size: 1.8em, weight: "bold", font: heading-text-font, title)
@@ -285,7 +306,10 @@
   }
 
   // --- Front matter (roman numerals) ---
-  set page(numbering: if inline-front { "1" } else { "i" })
+  show: body => if inline-front { body } else {
+    set page(numbering: "i")
+    body
+  }
   let front-title(body) = heading(level: 1, numbering: none, outlined: false, body)
 
   if declaration {
@@ -307,9 +331,19 @@
     if kw.len() > 0 { v(1em); [*#t.keywords:* #kw.join(", ")] }
   }
   if acknowledgements != none {
-    pagebreak(weak: true)
-    front-title(t.acknowledgements)
-    acknowledgements
+    if inline-front {
+      // Article style: a compact note under the abstract, not a page of its own.
+      block(width: 100%, inset: (x: 1.5em))[
+        #text(weight: "bold", t.acknowledgements)
+        #parbreak()
+        #acknowledgements
+      ]
+      v(1em)
+    } else {
+      pagebreak(weak: true)
+      front-title(t.acknowledgements)
+      acknowledgements
+    }
   }
   if toc {
     pagebreak(weak: true)
@@ -325,26 +359,13 @@
   }
 
   // --- Main matter (arabic numerals) ---
-  set page(
-    numbering: "1",
-    header: if running-header {
-      context {
-        let page-no = here().page()
-        let chapters = query(heading.where(level: 1, outlined: true))
-        let opens-chapter = chapters.any(h => h.location().page() == page-no)
-        let before = chapters.filter(h => h.location().page() <= page-no)
-        if opens-chapter or before.len() == 0 { none } else {
-          let ch = before.last()
-          let number = if ch.numbering != none {
-            [#numbering(ch.numbering, ..counter(heading).at(ch.location()))#h(1em)]
-          } else { none }
-          text(size: 0.85em, style: "italic", [#number#ch.body])
-          v(-0.5em)
-          line(length: 100%, stroke: 0.4pt)
-        }
-      }
-    } else { none },
-  )
+  // A `set page` rule placed after content forces a page break, so an article-style
+  // document (title block on the first page) must not emit one here: it already has
+  // the arabic numbering and the running header from the start.
+  show: body => if inline-front { body } else {
+    set page(numbering: "1", header: main-header)
+    body
+  }
   if not inline-front {
     pagebreak(weak: true)
     counter(page).update(1)

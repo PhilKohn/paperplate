@@ -93,6 +93,10 @@ def main() -> int:
         must_contain=["Paperplate Example Thesis", "Abstract", "[1]", "Figure 1", "Equation 1"],
         must_not_contain=["List of Tables", "List of Figures"],
     )
+    art = ROOT / "build/test/article-ieee.pdf"
+    if art.exists():
+        first_page = (PdfReader(str(art)).pages[0].extract_text() or "")
+        check("article: text starts on the title block's page", "Introduction" in first_page)
 
     # --- German report with declaration of authorship -----------------------------------
     case(
@@ -114,6 +118,26 @@ def main() -> int:
     default_pdf = ROOT / "build/test/default.pdf"
     if default_pdf.exists():
         check("exactly one '@' (the e-mail address)", pdf_text(default_pdf).count("@") == 1)
+
+    # --- raw LaTeX is translated or reported, never silently dropped ----------------------
+    print("\n[raw LaTeX]")
+    result = build("rawlatex.yaml")
+    check("strict build fails on unsupported LaTeX", result.returncode != 0)
+    check("warning names the unsupported markup",
+          "\\textbf" in result.stderr and "not supported" in result.stderr, result.stderr.strip()[-300:])
+    env = dict(os.environ, SOURCE_DATE_EPOCH=FIXED_EPOCH)
+    relaxed = subprocess.run(
+        [sys.executable, str(BUILD), "pdf", "--config", str(ROOT / "tests" / "configs" / "rawlatex.yaml")],
+        cwd=ROOT, env=env, capture_output=True, text=True)
+    check("non-strict build still succeeds", relaxed.returncode == 0, relaxed.stderr.strip()[-300:])
+    raw_pdf = ROOT / "build/test/rawlatex.pdf"
+    if raw_pdf.exists():
+        pages = [(p.extract_text() or "").replace("\u00a0", " ") for p in PdfReader(str(raw_pdf)).pages]
+        alltext = "\n".join(pages)
+        check("\\verb keeps its text", "intra\\Administrator" in alltext and "C:\\temp" in alltext)
+        check("\\today becomes the build date", "25 October 2025" in alltext)
+        check("\\newpage starts a new page", len(pages) >= 2 and "After the break" in pages[-1]
+              and "After the break" not in pages[0])
 
     # --- a mistyped citation key gives a clear error, not a Typst crash -------------------
     print("\n[missing citation key]")

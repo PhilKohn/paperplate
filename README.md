@@ -310,6 +310,8 @@ headingfont: [DejaVu Sans Mono]    # heading font
 pdf-standard: a-2b          # archival PDF/A, which many universities and libraries require
 ```
 
+**Japanese, Chinese, Korean:** no CJK font is built in, so add one yourself (for example Noto Serif CJK from <https://fonts.google.com/noto>), put the font files in `src/fonts/`, and set `font-paths: [src/fonts]` and `mainfont: [Noto Serif CJK JP]`. Line breaking and mixed Japanese/English text work. Labels such as "Contents" stay English or German for these languages.
+
 **Your own font:** put the `.ttf` or `.otf` file into a folder such as `src/fonts/`, then write
 `font-paths: [src/fonts]` and `mainfont: [The Font Family Name]`. Only built-in fonts and the fonts in
 those folders are used, never fonts installed on your computer. That is what makes the PDF look the
@@ -412,6 +414,7 @@ Almost every problem is shown in the last lines the terminal printed. If you are
 | The date on the title page is old | `date: auto` uses the date of your last *commit*. Commit, or write the date yourself: `date: "1 June 2027"`. |
 | `warning: pandoc … found, but paperplate is tested with …` | Your tool versions differ from the tested ones. Run the install commands again. |
 | `note: no git history found …` | Harmless. It appears if you downloaded a ZIP instead of using git. |
+| `raw LaTeX is not supported and was left out: …` | Your text contains LaTeX commands (for example `\textbf{…}`), which Paperplate does not run. Use Markdown instead (`**bold**`). Only `\verb|…|`, `\newpage` and `\today` are translated. |
 | `unknown font family` | Only built-in fonts and fonts in `font-paths` work. See [Settings](#settings-and-recipes). |
 | Windows: `running scripts is disabled` | You used `.venv\Scripts\Activate.ps1`. You do not need it; use `.venv\Scripts\python …` as shown. |
 
