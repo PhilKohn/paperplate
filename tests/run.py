@@ -115,6 +115,14 @@ def main() -> int:
     if default_pdf.exists():
         check("exactly one '@' (the e-mail address)", pdf_text(default_pdf).count("@") == 1)
 
+    # --- a mistyped citation key gives a clear error, not a Typst crash -------------------
+    print("\n[missing citation key]")
+    result = build("badcite.yaml")
+    check("build fails", result.returncode != 0)
+    check("error names the key in plain language",
+          "doesnotexist2099" in result.stderr and "not in your bibliography" in result.stderr,
+          result.stderr.strip()[-300:])
+
     # --- DOCX output keeps references, citations and images ---------------------------------
     print("\n[docx]")
     result = build("default.yaml", "docx")

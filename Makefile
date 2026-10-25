@@ -1,12 +1,14 @@
 # Paperplate. Run `make help`.
-PY      ?= python3
+# Use the project's own environment (.venv) when it exists, so nothing needs "activating".
 VENV    ?= .venv
-BUILD   := $(PY) paperplate/build.py
+PYBOOT  ?= python3
+PY      ?= $(if $(wildcard $(VENV)/bin/python),$(VENV)/bin/python,$(PYBOOT))
+BUILD    = $(PY) paperplate/build.py
 
 .PHONY: help setup pdf docx typ strict figures test versions clean
 
 help:
-	@echo "make setup     create .venv and install the pinned toolchain"
+	@echo "make setup     one-time: create .venv and install the pinned toolchain"
 	@echo "make pdf       build the PDF (output path: see paperplate.yaml)"
 	@echo "make strict    like pdf, but fail on any warning or tool-version mismatch"
 	@echo "make docx      build a Word version for reviewers"
@@ -17,9 +19,10 @@ help:
 	@echo "make clean     remove build/ and output/"
 
 setup:
-	$(PY) -m venv $(VENV)
-	$(VENV)/bin/pip install -r requirements.txt
-	@echo "Now use:  source $(VENV)/bin/activate"
+	$(PYBOOT) -m venv $(VENV)
+	$(VENV)/bin/python -m pip install --upgrade pip
+	$(VENV)/bin/python -m pip install -r requirements.txt
+	@echo "Setup done. Now run: make pdf"
 
 pdf:
 	$(BUILD) pdf

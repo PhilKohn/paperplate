@@ -20,15 +20,21 @@ import datetime as dt
 import glob
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
+if sys.version_info < (3, 9):
+    sys.exit(f"Paperplate needs Python 3.9 or newer; this is {sys.version.split()[0]}. "
+             "See 'Install' in the README.")
+
 try:
     import yaml
 except ImportError:  # pragma: no cover
-    sys.exit("PyYAML is missing. Run: pip install -r requirements.txt")
+    sys.exit("The setup step is missing. Run the 'Install' commands from the README "
+             "(on Mac/Linux: make setup), then try again.")
 
 PKG = Path(__file__).resolve().parent            # .../paperplate
 ROOT = PKG.parent                                # project root
@@ -66,7 +72,7 @@ def find_pandoc() -> str:
     found = shutil.which("pandoc")
     if found:
         return found
-    raise BuildError("Pandoc not found. Run: pip install -r requirements.txt")
+    raise BuildError("Pandoc not found. Run the 'Install' commands from the README (make setup).")
 
 
 def tool_versions(pandoc: str) -> dict:
@@ -79,7 +85,7 @@ def tool_versions(pandoc: str) -> dict:
             from importlib.metadata import version
             typst_version = version("typst")
     except ImportError:
-        raise BuildError("typst is missing. Run: pip install -r requirements.txt")
+        raise BuildError("typst is missing. Run the 'Install' commands from the README (make setup).")
     return {"pandoc": pandoc_version, "typst": typst_version}
 
 
@@ -156,8 +162,9 @@ def build_timestamp() -> dt.datetime:
             return dt.datetime.fromtimestamp(int(out), tz=dt.timezone.utc)
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass
-    print("warning: no SOURCE_DATE_EPOCH and no git history; using the current time, "
-          "so the build is not reproducible.", file=sys.stderr)
+    print("note: no git history found, so today's date and time are used. The text is the same "
+          "on every build, but the PDF file differs slightly each time. (To get identical files, "
+          "keep the project in git and commit, or set SOURCE_DATE_EPOCH.)", file=sys.stderr)
     return dt.datetime.now(tz=dt.timezone.utc).replace(microsecond=0)
 
 
@@ -222,7 +229,7 @@ def run_pandoc(pandoc: str, config: dict, meta: dict, target: str, out_file: Pat
     if target != "typst":
         # Typst resolves images itself (the filter makes the paths root-absolute);
         # every other writer needs to know where the Markdown's relative paths start.
-        cmd += ["--resource-path", f"{ROOT}:{ROOT / meta['source-dir']}"]
+        cmd += ["--resource-path", os.pathsep.join([str(ROOT), str(ROOT / meta["source-dir"])])]
     if target == "typst":
         cmd += ["--template", str(PKG / "templates" / "document.typ"),
                 "-V", f"paperplate-lib={meta['paperplate-lib']}"]
@@ -232,8 +239,14 @@ def run_pandoc(pandoc: str, config: dict, meta: dict, target: str, out_file: Pat
 
     env = dict(os.environ, LC_ALL="C.UTF-8", TZ="UTC")
     result = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True, env=env)
-    if result.stderr.strip():
-        print(result.stderr.strip(), file=sys.stderr)
+    stderr_lines = []
+    for line in result.stderr.strip().splitlines():
+        if "rsvg-convert" in line:
+            line = ("note: SVG figures were embedded as SVG; Word 2016 or newer shows them. "
+                    "For older Word, use PNG figures or install rsvg-convert (librsvg).")
+        stderr_lines.append(line)
+    if stderr_lines:
+        print("\n".join(stderr_lines), file=sys.stderr)
     if result.returncode != 0:
         raise BuildError("Pandoc failed")
     return result.stderr
@@ -302,6 +315,11 @@ def main(argv: list[str] | None = None) -> int:
 
         typ_file = ROOT / "build" / "document.typ"
         stderr = run_pandoc(pandoc, config, meta, "typst", typ_file)
+        missing = sorted(set(re.findall(r"Citeproc: citation (\S+) not found", stderr or "")))
+        if missing:
+            raise BuildError(
+                "these citation keys are not in your bibliography file: " + ", ".join(missing)
+                + "\nCheck the spelling against the keys in your .bib file (capital letters count).")
         if args.strict and stderr and "WARNING" in stderr:
             raise BuildError("Pandoc warnings treated as errors (--strict)")
         if args.command == "typ":
