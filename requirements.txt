@@ -1,0 +1,6 @@
+# Pinned toolchain. Changing any of these can change the output; bump deliberately,
+# run `make test`, and update EXPECTED in paperplate/build.py to match.
+typst==0.15.0
+pypandoc_binary==1.17      # bundles Pandoc 3.9
+PyYAML==6.0.3
+pypdf==6.21.2              # tests only

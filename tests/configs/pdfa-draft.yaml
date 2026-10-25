@@ -1,0 +1,8 @@
+profile: thesis
+input: src/input.md
+bibliography: src/bibliography.bib
+csl: chicago-author-date
+pdf-standard: a-2b
+two-sided: true
+draft: true
+output: build/test/pdfa-draft.pdf

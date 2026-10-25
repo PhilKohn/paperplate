@@ -1,66 +1,107 @@
 ---
-title: "The Effect of Knowledge Claims on the Diffusion of Narratives"
-subtitle: "Social Media Messaging of European Parliarmentarians on Twitter"
-author: "Philipp Kohn"
-supervisors: "Prof. Dr. Johan Christensen"
-date: \today
-numbersections: true
-secnumdepth: 2
-number-sections: true
-toc: true
-lof: true
-lot: true
-strip-comments: true
-xnos-number-by-section: false
-documentclass: report
-output: pdf_document
-link-citations: true
-degree_type: "Public Administration, Economics and Governace"
-subparagraph: yes
-abstract: This thesis aims to explain ...
-acknowledgements: I would like to thank myself.
+title: "Paperplate Example Thesis"
+subtitle: "A deterministic path from Markdown to PDF"
+author: "Your Name"
+supervisor: ["Prof. Jane Doe", "Dr. John Roe"]
+institution: "Example University"
+faculty: "Faculty of Examples"
+degree: "Thesis submitted in partial fulfilment of the requirements for the degree of Master of Science"
+student-id: "123456"
+email: "your.name@example.org"
+date: auto
+show-word-count: true
+lang: en
+keywords: [reproducibility, typesetting, Markdown, citations]
+abstract: |
+  This example document shows what Paperplate can do. It is written in plain
+  Markdown, cites sources from a BibTeX file, contains figures, tables and an
+  equation, and is turned into a PDF by a fixed sequence of tools. Replace this
+  text and the rest of the file with your own work.
+acknowledgements: |
+  Thanks to everyone who reads drafts, and to the authors of Pandoc and Typst.
 ---
-<!-- pandoc --verbose --filter pandoc-xnos --citeproc "complete.md" --bibliography latex.bib -o final.pdf --template imperial.tex -->
 
-<!---Named references can be added to figures, tables, equations, and sections. For figures, place `{#fig:referenceName}` directly after an image in Ulysses [no whitespace allowed]. You can now reference the figure with `@fig:referenceName`.-->
+# Introduction {#sec:intro}
 
-<!--- Table ref {#tbl:referenceName} at tabel, after: +@tbl:referenceName-->
+A document that is built from plain text can be versioned, reviewed and rebuilt at any
+time. Literate and reproducible workflows have long argued for keeping the source of a
+document and its product together [@knuth1984; @sandve2013, pp. 2--3]. The same idea
+applies to a thesis: the Markdown file is the thesis, and the PDF is a product that can
+be regenerated whenever needed.
 
-<!---# Section Title {#sec:referenceName} then @sec:referenceName-->
+This chapter introduces the example. @sec:writing explains how to write text, @sec:figures
+shows figures, tables and equations, and @sec:config explains the configuration.
 
-<!---Equations: {#eq:referenceName} then +@eq:referenceName-->
+## What is built {#sec:built}
 
-<!---Citing a collection of articles :[@SEABORN201514;@gamification-leaderboard-benefits].-->
+The build runs the same steps every time. @fig:pipeline gives an overview.
 
-<!--Blah blah [see @doe99, pp. 33-35; also @smith04, chap. 1].-->
+![From Markdown to PDF: every step is a fixed tool with a pinned version.](figures/pipeline.svg){#fig:pipeline width=100%}
 
-<!--Blah blah [@doe99, pp. 33-35, 38-39 and *passim*].-->
+Data should be findable and reusable, which is the point of the FAIR principles
+[@wilkinson2016]. The bibliography below is generated only from the sources that are
+actually cited in the text.
 
-<!--Blah blah [@smith04; @doe99] `pandoc` detects locator terms in the [CSL locale files][https://github.com/citation-style-language/locales].--> 
+# Writing in Markdown {#sec:writing}
 
-<!--`pandoc` will use heuristics to distinguish the locator from the suffix. In complex cases, the locator can be enclosed in curly braces:-->
+Use normal Markdown: *emphasis*, **strong text**, `inline code`, lists, quotes and
+footnotes.[^note] A source is cited by its key from the `.bib` file, for example
+[@knuth1984]. A citation can have a page locator, [@sandve2013, p. 4], and several
+sources can be combined, [@knuth1984; @wilkinson2016]. When the author is part of the
+sentence, write @wilkinson2016 directly.
 
-<!--[@smith{ii, A, D-Z}, with a suffix]-->
-<!--[@smith, {pp. iv, vi-xi, [xv]-[xvii]} with suffix here]-->
+[^note]: Footnotes are numbered automatically and placed at the bottom of the page.
 
-<!--A minus sign [`-`] before the `@` will suppress mention of the author in the citation. This can be useful when the author is already mentioned in the text:-->
+> A block quote is set off from the surrounding text.
 
-<!--Smith says blah [-@smith04].-->
-<!--You can also write an in-text citation, as follows:-->
+Lists work as usual:
 
-<!--@smith04 says blah.-->
+1. Write the text in Markdown.
+2. Keep the bibliography in Zotero and export it as a `.bib` file.
+3. Run the build.
 
-<!--@smith04 [p. 33] says blah. -->
+A code block keeps its formatting:
 
-<!--- https://github.com/tomduck/pandoc-xnos -->
-# Introduction
+```bash
+make pdf
+```
 
-Lorem ipsum
+# Figures, tables and equations {#sec:figures}
 
-## Some addtional info
+Figures are plain image files (PNG, JPG or SVG). They are never generated during the
+build, so even very long analyses do not slow it down: create the image once and commit it.
+@fig:chart is a PNG file.
 
-test test
+![An example chart (made-up data).](figures/chart.png){#fig:chart width=70%}
 
-# Conclusion
+Tables are written in Markdown and can be referenced as well; see @tbl:profiles.
 
-The end
+| Profile | Title page | Contents | Chapters on new page |
+|:--------|:----------:|:--------:|:--------------------:|
+| thesis  | yes        | yes      | yes                  |
+| report  | yes        | yes      | no                   |
+| article | no         | no       | no                   |
+
+: The built-in profiles. {#tbl:profiles}
+
+Equations are written in TeX notation. The arithmetic mean is defined in @eq:mean.
+
+$$ \bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i $$ {#eq:mean}
+
+Inline mathematics such as $a^2 + b^2 = c^2$ needs no label.
+
+# Configuration {#sec:config}
+
+Settings live in `paperplate.yaml`; the content of the title page, the abstract and the
+other texts live in the YAML front matter at the top of this file. Switching the
+citation style is a one-line change (`csl: ieee`), as is choosing a different profile
+(`profile: article`) or turning pages on and off (`declaration: true`, `lof: false`).
+
+# Conclusion {#sec:conclusion}
+
+A thesis written this way is easy to rebuild, review and archive. Everything that
+influences the output is in the repository, and the tool versions are pinned.
+
+# Appendix {.unnumbered}
+
+Unnumbered headings are used for appendices and similar sections.

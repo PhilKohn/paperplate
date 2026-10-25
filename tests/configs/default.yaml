@@ -1,0 +1,5 @@
+profile: thesis
+input: src/input.md
+bibliography: src/bibliography.bib
+csl: apa7
+output: build/test/default.pdf

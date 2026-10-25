@@ -1,0 +1,5 @@
+profile: article
+input: src/input.md
+bibliography: src/bibliography.bib
+csl: ieee
+output: build/test/article-ieee.pdf

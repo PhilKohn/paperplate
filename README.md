@@ -1,90 +1,125 @@
-# Pandoc Thesis Template for Academic Writing
+# Paperplate
 
-This repository provides a template for compiling academic theses or papers using Pandoc. The primary function is to automate the conversion of Markdown files into professionally formatted PDFs using GitHub Actions.
+Write in Markdown, get a PDF. Titlepage, table of contents, citations, figures, tables,
+equations and cross-references included. Same input, same tools, **same bytes out**.
 
-## Features
+```
+Markdown + .bib + images ──Pandoc (+ Lua filter, citeproc, CSL)──▶ Typst ──▶ PDF
+                                       └────────────────────────────────▶ DOCX (for reviewers)
+```
 
-- **Markdown to PDF Conversion:** Easily convert your thesis written in Markdown to a PDF.
-- **GitHub Actions Automation:** Automatically compile your thesis into a PDF upon release. Then attaches the PDF to the release assets.
-- **Customizable Templates:** Modify the LaTeX template to suit your formatting needs.
+No LaTeX, no R, no Docker needed. Code is never run during the build: figures are image
+files you create beforehand and commit.
 
-## Repository Structure
+## Quick start
 
-- `src/`: Contains the source files including `input.md` (main content), `bibtex.bib` (bibliography), and LaTeX templates.
-- `.github/workflows/`: Contains the GitHub Actions workflow file that automates the PDF generation.
+```bash
+make setup && source .venv/bin/activate   # installs the pinned toolchain (Python 3.10+)
+make pdf                                  # -> output/example-thesis.pdf
+```
 
-## Usage
+Then edit `src/input.md` and `src/bibliography.bib`, and set the output name in
+`paperplate.yaml`. Use this repository as a GitHub template for each new document.
 
-1. **Initialize a new repo from this repo template**
-   - Clone this template to your GitHub account
-   - Download GitHub CLI
-        - On Mac: `brew install gh`
-   - login to GitHub using `gh auth login`
-        - If Auth login fails due to permission issues on `./config` check: https://github.com/cli/cli/issues/5013#issuecomment-1167161959
-   - Create a new repo on GitHub using `gh repo create` and follow each step, select `create from template`, give the repo a name, select `paperplate` as the template
+## Writing
 
-3. **Edit Markdown Content:**
-   - Modify the `src/input.md` file with your thesis content.
-   - Update `src/assets/bibtex.bib` for your references.
+```markdown
+# Introduction {#sec:intro}
 
-4. **Automatic PDF Generation:**
-   - Push your changes to the repository.
-   - The GitHub Actions workflow will automatically compile the Markdown into a PDF using Pandoc.
+As shown in @fig:chart and @tbl:profiles, see also @sec:method and @eq:mean.
+Cite with keys from your .bib file [@knuth1984, p. 4; @wilkinson2016] or @sandve2013 says...
 
-5. **Download the PDF:**
-   - After the workflow completes, download the generated `output.pdf` from the release assets.
-  
-### Markdown Structure Guidelines
+![Caption text.](figures/chart.png){#fig:chart width=70%}
 
-To ensure your Markdown file is correctly processed into a professional PDF, follow these guidelines:
+| A | B |
+|---|---|
+| 1 | 2 |
 
-1. **YAML Front Matter**:
-   - Begin with a YAML block containing metadata like `title`, `author`, `date`, `abstract`, and `acknowledgements`.
-   - Use Pandoc-specific settings like `toc` (table of contents), `lof` (list of figures), `lot` (list of tables), and `documentclass` to control the document structure.
+: Table caption. {#tbl:profiles}
 
-2. **Sections and Headings**:
-   - Use `#` for top-level sections (e.g., `# Introduction`), `##` for subsections, and so on.
-   - Pandoc automatically generates a table of contents, so no need to manually create one.
-   - You can reference sections using pandoc-secnos by lableing a section with `{#sec:label}` and then calling that lable inline unsing `@sec:lable`
+$$ \bar{x} = \frac{1}{n} \sum x_i $$ {#eq:mean}
+```
 
-3. **Figures and Tables**:
-   - Embed figures using `![Caption](path/to/image){width=40% #fig:label}`.
-   - Reference figures with `@fig:label` in the text.
-   - Tables and equations can be similarly referenced using `#tbl:label` and `#eq:label`.
+Labels: `fig:`, `tbl:`, `eq:`, `sec:`. In the PDF, Typst does the numbering and, with
+`lang: de`, the wording ("Abbildung 1"). Image paths are relative to `src/`.
+`src/input.md` is a complete working example.
 
-4. **Citations and References**:
-   - Use citation keys like `[@authorYear]` to cite sources, with support for multiple and complex citations.
-   - Include a bibliography file (e.g., `bibtex.bib`) and set the citation style in the YAML front matter.
+## Settings
 
-5. **Footnotes**:
-   - Define footnotes inline with `[^label]`, with definitions at the bottom of the document or section.
+Three layers, last one wins: **profile** → `paperplate.yaml` → **front matter** of your Markdown file.
 
-6. **Mathematical Equations**:
-   - Inline equations are enclosed in `$`, and display equations are enclosed in `$$`.
+| Profile | Title page | Contents | LoF / LoT | New page per chapter |
+|---|---|---|---|---|
+| `thesis` | yes | yes | yes | yes |
+| `report` | yes | yes | no | no |
+| `article` | no (title block) | no | no | no |
 
-7. **Bibliography**
-   - Bibliography at the end of the paper will be genereated from the `bibtex.bib` file generated from Zotero's Better BibTex extention by including html tag `<div id="refs"></div>`
+Build settings (`paperplate.yaml`): `profile`, `input` (file, list or glob such as
+`src/chapters/*.md`), `bibliography`, `csl`, `output`, `pdf-standard`, `font-paths`,
+`source-dir`, `docx-reference`.
 
-This structure ensures your Markdown file is compatible with Pandoc’s processing pipeline, resulting in a well-formatted PDF output. For clarification check out `src/template/reference.md`
+Document content (front matter): `title`, `subtitle`, `author`, `supervisor`, `institution`,
+`faculty`, `degree`, `student-id`, `email`, `date` (`auto` = build date), `keywords`,
+`abstract`, `acknowledgements`, `lang` (`en`, `de`), `logo`.
 
-## Requirements
+Layout toggles: `titlepage`, `title-block`, `declaration`, `toc`, `toc-depth`, `lof`, `lot`,
+`show-word-count`, `draft`, `two-sided`, `papersize`, `mainfont`, `monofont`, `fontsize`,
+`linestretch`, `justify`, `paragraph-style` (`indent`|`block`), `heading-numbering`,
+`chapter-pagebreak`, `running-header`.
 
-- No local dependencies are required. The entire process is handled through GitHub Actions.
-- Nonetheless, you need some software to write markdown in (ex.: Obsidian, Ulysses, VSCode etc.). Even basic text editors will do the trick.
-- I recommend using Zotero and its Better BibTex add on to generete the `.bib` file in `src/assets`
-- Also, you should have git installed on your machine and an GitHub account. You can also use the GitHub Desktop app if you don't want to use the terminal. This way you can clone this template to your repository and make push commits to trigger the workflow which will generate the pdf file. 
+**Citation styles:** `csl: apa7 | ieee | chicago-author-date | harvard | mla | nature | din-1505-2`,
+or a path to any `.csl` file (see <https://www.zotero.org/styles>).
 
-## Planed Development
+**Fonts:** only fonts embedded in Typst plus those in `paperplate/fonts/` or your `font-paths`
+are used. System fonts are deliberately ignored; that is what makes the output identical on every machine.
 
-- Write a `build.sh` file that will enable users to run everything locally.
-- Build a `Dockerfile` on `pandoc/latex:ubuntu-latest` to avoid installing python and all TexLive dependencys within the GitHub Actions process.
-- Build more templates.
-- Build a way to trigger same action on release for more structured release of Thesis versions.
+**Archival PDF:** `pdf-standard: a-2b` (also `a-1b`, `a-3b`, `a-4`, `ua-1`, …).
+
+## Bibliography with Zotero
+
+1. Install [Better BibTeX](https://retorque.re/zotero-better-bibtex/).
+2. Right-click your collection → *Export Collection…* → format *Better BibTeX*, tick **Keep updated**, save as `src/bibliography.bib`.
+3. Cite with the key Better BibTeX shows (`@knuth1984`).
+
+Only cited works appear in the reference list. CSL JSON/YAML files also work.
+
+## Figures from code
+
+The build never executes code. Generate images however you like and commit them. If you want a
+single command for that, put the recipe in `src/figures/Makefile`; `make figures` runs it.
+
+## DOCX for reviewers
+
+`make docx` produces a Word file from the same source (same cross-reference numbers and
+bibliography). Supply `docx-reference: src/reference.docx` to control its styles. SVG figures in
+DOCX need `rsvg-convert` (`librsvg2-bin`); otherwise use PNG.
+
+## Reproducibility
+
+- Pinned versions: Pandoc 3.9 and Typst 0.15.0 (`requirements.txt`). `--strict` (used in CI) fails on a version mismatch or any warning.
+- Timestamp: `SOURCE_DATE_EPOCH` if set, otherwise the last git commit date. `date: auto` and the PDF metadata use it, so rebuilding an unchanged commit gives identical bytes. Uncommitted edits keep the previous commit's date until you commit.
+- `make test` builds four configurations (English thesis, IEEE article, German report, PDF/A + draft), checks the PDFs and verifies that two builds are byte-identical.
+
+## GitHub Actions
+
+`.github/workflows/build.yml` runs tests and a strict build on every push and pull request,
+uploads the result as an artifact, and attaches the PDF and DOCX to every published release.
+
+## Layout
+
+```
+paperplate.yaml            project settings
+src/                       your Markdown, .bib, figures
+paperplate/build.py        the build
+paperplate/filters/        Lua filter: cross-references, word count, paths
+paperplate/templates/      Typst layout (document.typ is the Pandoc template, paperplate.typ the design)
+paperplate/profiles/       thesis | report | article defaults
+paperplate/csl/            bundled citation styles
+tests/                     end-to-end tests
+```
+
+The previous LaTeX-based version is preserved on the branch `archive/latex-pandoc-v0`.
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
-## Contributions
-
-Contributions are welcome! Please open an issue or submit a pull request.
+MIT, see [LICENSE](LICENSE). Bundled CSL styles are CC BY-SA 3.0, see [THIRD_PARTY.md](THIRD_PARTY.md).
