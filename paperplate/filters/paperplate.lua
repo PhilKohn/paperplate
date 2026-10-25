@@ -208,6 +208,53 @@ local function Image(img)
   return img
 end
 
+-- Raw LaTeX --------------------------------------------------------------------------------
+-- Pandoc silently drops raw LaTeX when the output is not LaTeX, which leaves holes in the
+-- document (an empty pair of quotes where \verb|...| stood, say). Translate the few
+-- commands people actually use, and warn about everything else so nothing vanishes unseen.
+
+local keeps_tex = FORMAT:match("latex") or FORMAT:match("beamer")
+local build_date = nil   -- set in Pandoc(); used for \today
+
+local function is_tex(fmt) return fmt == "tex" or fmt == "latex" end
+
+local function page_break()
+  if is_typst then return pandoc.RawBlock("typst", "#pagebreak()") end
+  if FORMAT:match("docx") then
+    return pandoc.RawBlock("openxml", '<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
+  end
+  return nil
+end
+
+local function warn_raw(text)
+  io.stderr:write("[WARNING] paperplate: raw LaTeX is not supported and was left out: "
+    .. trim(text):gsub("\n", " ") .. "\n")
+end
+
+local function RawInline(el)
+  if keeps_tex or not is_tex(el.format) then return nil end
+  local delim, body = el.text:match("^\\verb%*?(%p)(.-)%1$")
+  if body then return pandoc.Code(body) end
+  local name = trim(el.text):match("^\\(%a+)$")
+  if name == "today" and build_date then return pandoc.Str(build_date) end
+  if (name == "newpage" or name == "pagebreak" or name == "clearpage") and is_typst then
+    return pandoc.RawInline("typst", "#pagebreak()")
+  end
+  warn_raw(el.text)
+  return {}
+end
+
+local function RawBlock(el)
+  if keeps_tex or not is_tex(el.format) then return nil end
+  local name = trim(el.text):match("^\\(%a+)$")
+  if name == "newpage" or name == "pagebreak" or name == "clearpage" then
+    local pb = page_break()
+    if pb then return pb end
+  end
+  warn_raw(el.text)
+  return {}
+end
+
 -- Word count -------------------------------------------------------------------------
 
 local function count_words(blocks)
@@ -238,9 +285,13 @@ function Pandoc(doc)
     source_dir = pandoc.utils.stringify(meta["source-dir"])
   end
 
+  if meta["build-date"] ~= nil then build_date = pandoc.utils.stringify(meta["build-date"]) end
+
   collect(doc)
 
   local filtered = doc:walk({
+    RawInline = RawInline,
+    RawBlock = RawBlock,
     Image = Image,
     Cite = Cite,
     Figure = Figure,
