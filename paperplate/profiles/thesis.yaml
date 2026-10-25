@@ -1,0 +1,25 @@
+# Profile: thesis — title page, front matter, chapters on new pages.
+# Everything here is a default; override any key in paperplate.yaml or in the
+# YAML front matter of your Markdown file.
+titlepage: true
+declaration: false
+toc: true
+toc-depth: 3
+lof: true
+lot: true
+word-count: auto
+show-word-count: false
+two-sided: false
+papersize: a4
+fontsize: 11pt
+mainfont: [Libertinus Serif]
+monofont: [DejaVu Sans Mono]
+linestretch: 1.25
+justify: true
+paragraph-style: block
+heading-numbering: "1.1"
+heading-numbering-depth: 3
+chapter-pagebreak: true
+running-header: true
+reference-section-title: References
+link-citations: true

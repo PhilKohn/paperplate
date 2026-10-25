@@ -1,0 +1,23 @@
+# Profile: article — compact title block, abstract on the first page, no title page.
+titlepage: false
+title-block: true
+declaration: false
+toc: false
+lof: false
+lot: false
+word-count: auto
+show-word-count: false
+two-sided: false
+papersize: a4
+fontsize: 11pt
+mainfont: [Libertinus Serif]
+monofont: [DejaVu Sans Mono]
+linestretch: 1.1
+justify: true
+paragraph-style: indent
+heading-numbering: "1.1"
+heading-numbering-depth: 3
+chapter-pagebreak: false
+running-header: false
+reference-section-title: References
+link-citations: true

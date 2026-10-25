@@ -1,0 +1,23 @@
+# paperplate.yaml — project settings.
+#
+# Build settings live here. Document content (title, author, abstract, ...) goes into
+# the YAML front matter of your Markdown file. A value in the front matter wins over a
+# value here, and a value here wins over the profile default (paperplate/profiles/).
+
+profile: thesis                    # thesis | report | article
+input: src/input.md                # one file, or a list / glob: src/chapters/*.md (sorted)
+bibliography: src/bibliography.bib # BibTeX/BibLaTeX .bib, CSL JSON or CSL YAML; may be a list
+csl: apa7                          # apa7 | ieee | chicago-author-date | harvard | mla | nature | din-1505-2
+                                   # or a path to any .csl file, e.g. src/my-style.csl
+output: output/example-thesis.pdf  # the .docx build uses the same name
+
+# --- Optional -----------------------------------------------------------------------
+# pdf-standard: a-2b               # archival PDF/A (also: a-1b, a-2a, a-2u, a-3b, a-4, ua-1, ...)
+# font-paths: [src/fonts]          # extra folders with .ttf/.otf files (system fonts are ignored)
+# mainfont: [Libertinus Serif]     # font family; must be embedded in Typst or in a font folder
+# papersize: us-letter
+# two-sided: true                  # mirrored margins for double-sided printing
+# declaration: true                # adds a declaration-of-authorship page
+# titlepage: false                 # drop the title page
+# draft: true                      # diagonal DRAFT watermark
+# logo: src/figures/logo.png       # shown on the title page

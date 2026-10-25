@@ -1,0 +1,23 @@
+# Profile: report — title page, contents, no forced page breaks between sections.
+titlepage: true
+declaration: false
+toc: true
+toc-depth: 2
+lof: false
+lot: false
+word-count: auto
+show-word-count: false
+two-sided: false
+papersize: a4
+fontsize: 11pt
+mainfont: [Libertinus Serif]
+monofont: [DejaVu Sans Mono]
+linestretch: 1.15
+justify: true
+paragraph-style: block
+heading-numbering: "1.1"
+heading-numbering-depth: 3
+chapter-pagebreak: false
+running-header: false
+reference-section-title: References
+link-citations: true

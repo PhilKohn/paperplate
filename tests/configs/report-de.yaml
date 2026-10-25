@@ -1,0 +1,8 @@
+profile: report
+input: tests/fixtures/german.md
+bibliography: src/bibliography.bib
+csl: din-1505-2
+declaration: true
+lof: true
+lot: true
+output: build/test/report-de.pdf

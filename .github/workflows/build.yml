@@ -1,0 +1,49 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write   # needed to attach the PDF to a release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - run: pip install -r requirements.txt
+
+      - name: SVG converter (for SVG figures in the DOCX build)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends librsvg2-bin
+
+      - name: Tests
+        run: python3 tests/run.py
+
+      - name: Build PDF (strict)
+        run: python3 paperplate/build.py pdf --strict
+
+      - name: Build DOCX
+        run: python3 paperplate/build.py docx
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: document
+          path: output/
+
+      - name: Attach to release
+        if: github.event_name == 'release'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: output/*

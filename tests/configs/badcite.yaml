@@ -1,0 +1,5 @@
+profile: article
+input: tests/fixtures/badcite.md
+bibliography: src/bibliography.bib
+csl: apa7
+output: build/test/badcite.pdf
